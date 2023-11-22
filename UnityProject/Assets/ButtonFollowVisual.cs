@@ -52,6 +52,8 @@ public class ButtonFollowVisual : MonoBehaviour
                 isFollowing = true;
                 freeze = false;
             }
+
+            Debug.Log("BotónDetectado");
         }
     }
 
