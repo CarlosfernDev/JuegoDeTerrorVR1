@@ -7,7 +7,7 @@ public class Logica_Calculadora_UI : MonoBehaviour
     public GameObject objetoCorrecto; // Asigna este objeto en el Inspector de Unity
     public GameObject objetoIncorrecto; // Asigna este objeto en el Inspector de Unity
 
-    private string clavePredeterminada = "123456789";
+    private string clavePredeterminada = "12345";
     private string entradaUsuario = "";
 
     public TMP_InputField pantalla;
@@ -20,12 +20,14 @@ public class Logica_Calculadora_UI : MonoBehaviour
 
     public void OnButtonPress(int digito)
     {
-        if (entradaUsuario.Length < 9)
+        DesactivarObjeto(objetoIncorrecto);
+
+        if (entradaUsuario.Length < 5)
         {
             entradaUsuario += digito.ToString();
             ActualizarPantalla();
 
-            if (entradaUsuario.Length == 9)
+            if (entradaUsuario.Length == 5)
             {
                 VerificarClave();
             }
@@ -73,6 +75,14 @@ public class Logica_Calculadora_UI : MonoBehaviour
         else
         {
             Debug.LogError("El objeto no está asignado en el Inspector.");
+        }
+    }
+
+    void DesactivarObjeto(GameObject objeto)
+    {
+        if (objeto != null && objeto.activeSelf)
+        {
+            objeto.SetActive(false);
         }
     }
 }
