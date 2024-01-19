@@ -7,6 +7,9 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
     public float velocidadDesplazamiento = 1.0f;
     public float alturaMaxima = -5.0f;
     public float tiempoLimite = 3f;
+    public float tiempoDetenido = 5f;
+    public int tiempoSinMirarMinimo = 3;
+
     public Transform posicionInicial;  // Nueva variable para la posición inicial
 
     public List<Transform> posicionesIntermedias;  // Lista de Transform que representan las posiciones intermedias
@@ -15,6 +18,9 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
     private bool playerMirando = false;
     private float tiempoDetectado = 0f;
+    private float tiempoDetenidoActual = 0f;
+
+    private bool detenerMovimiento = false;
 
     void Start()
     {
@@ -39,6 +45,7 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         if (other.CompareTag("Player_Mirando") && posicionActualIndex == posicionesIntermedias.Count - 1)
         {
             playerMirando = true;
+            tiempoDetectado = Time.time;
         }
     }
 
@@ -55,14 +62,17 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
     {
         while (posicionActualIndex >= 0 && posicionActualIndex < posicionesIntermedias.Count)
         {
-            Vector3 destino = posicionesIntermedias[posicionActualIndex].position;
-            float distancia = Vector3.Distance(transform.position, destino);
-
-            while (distancia > 0.1f)
+            if (!detenerMovimiento)
             {
-                transform.position = Vector3.MoveTowards(transform.position, destino, velocidadDesplazamiento * Time.deltaTime);
-                distancia = Vector3.Distance(transform.position, destino);
-                yield return null;
+                Vector3 destino = posicionesIntermedias[posicionActualIndex].position;
+                float distancia = Vector3.Distance(transform.position, destino);
+
+                while (distancia > 0.1f)
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, destino, velocidadDesplazamiento * Time.deltaTime);
+                    distancia = Vector3.Distance(transform.position, destino);
+                    yield return null;
+                }
             }
 
             if (enMovimientoAscendente)
@@ -70,9 +80,30 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
                 posicionActualIndex++;
                 if (posicionActualIndex == posicionesIntermedias.Count)
                 {
-                    // Alcanzó la última posición intermedia, invertir la dirección
+                    // Alcanzó la última posición intermedia, detenerse
                     enMovimientoAscendente = false;
                     posicionActualIndex = posicionesIntermedias.Count - 1;
+
+                    yield return new WaitForSeconds(tiempoDetenido);
+                    tiempoDetenidoActual = Time.time;
+
+                    // Verificar si la tag "Player_Mirando" no ha sido detectada durante el tiempo mínimo requerido
+                    while (Time.time - tiempoDetenidoActual < tiempoSinMirarMinimo)
+                    {
+                        if (!playerMirando)
+                        {
+                            tiempoDetenidoActual = 0f;
+                            break;
+                        }
+                        yield return null;
+                    }
+
+                    // Desactivar el objeto si la tag "Player_Mirando" no se detecta durante el tiempo mínimo
+                    if (!playerMirando)
+                    {
+                        gameObject.SetActive(false);
+                        yield break;
+                    }
                 }
             }
             else
@@ -83,6 +114,9 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
                     // Volvió a la primera posición, reiniciar el movimiento ascendente
                     enMovimientoAscendente = true;
                     posicionActualIndex = 0;
+
+                    // Detener el movimiento al volver a la primera posición
+                    detenerMovimiento = true;
                 }
             }
 
@@ -110,6 +144,8 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
         // Reiniciar la dirección y recorrer las posiciones en sentido ascendente
         enMovimientoAscendente = true;
+        detenerMovimiento = false; // Permitir el movimiento nuevamente
+
         StartCoroutine(DesplazarHaciaPosicionesIntermedias());
     }
 }

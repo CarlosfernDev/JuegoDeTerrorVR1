@@ -8,6 +8,7 @@ TagManager:
   - Boton
   - BotonDelete
   - Player_Mirando
+  - Enemigo_Ver
   layers:
   - Default
   - TransparentFX
