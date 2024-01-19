@@ -13,6 +13,9 @@ public class GameplaySimonDice : MonoBehaviour
     [SerializeField] private AudioSource SimonAudio;
     [SerializeField] private AudioSource WrongAudio;
 
+    [SerializeField] private AudioClip WrongSound;
+    [SerializeField] private AudioClip CompleteSound;
+
     private bool canISendInput = true;
     private List<int> numberSerie;
     private List<int> usernumberSerie = new List<int>();
@@ -86,7 +89,14 @@ public class GameplaySimonDice : MonoBehaviour
     {
         if (numberSerie.Count + 1 > totalNumberSerie)
         {
-            Debug.Log("Te pasaste el juego");
+            WrongAudio.clip = CompleteSound;
+            WrongAudio.Play();
+
+            foreach (Material buttonvisual in visualButtons)
+            {
+                buttonvisual.SetFloat("_Intensity", 1);
+            }
+
             LightBulbPass[numberSerie.Count - 1].SetFloat("_Intensity", 1);
             PuzzleScipt.isDone = true;
             return;
@@ -160,6 +170,7 @@ public class GameplaySimonDice : MonoBehaviour
         yield return new WaitForSeconds(0.8f);
         //SimonAudio.pitch = 0.9f + (0.1f * index);
         //SimonAudio.Play();
+        WrongAudio.clip = WrongSound;
         WrongAudio.Play();
         visualButtons[0].SetFloat("_Intensity", 1);
         visualButtons[2].SetFloat("_Intensity", 1);
@@ -201,8 +212,8 @@ public class GameplaySimonDice : MonoBehaviour
 
             if (Enable)
             {
-                SimonAudio.pitch = 0.9f + (0.1f * numberSerie[0]);
-                SimonAudio.Play();
+                //SimonAudio.pitch = 0.9f + (0.1f * numberSerie[0]);
+                //SimonAudio.Play();
 
                 visualButtons[numberSerie[0] - 1].SetFloat("_Intensity", 1);
             }
