@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Meteor
+  - Boton
+  - BotonDelete
+  - Player_Mirando
   layers:
   - Default
   - TransparentFX
