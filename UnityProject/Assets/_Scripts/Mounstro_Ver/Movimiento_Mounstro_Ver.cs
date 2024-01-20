@@ -8,11 +8,10 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
     public float alturaMaxima = -5.0f;
     public float tiempoLimite = 3f;
     public float tiempoDetenido = 5f;
-    public int tiempoSinMirarMinimo = 3;
+    public float tiempoSinMirarMinimo = 2f;
 
-    public Transform posicionInicial;  // Nueva variable para la posición inicial
-
-    public List<Transform> posicionesIntermedias;  // Lista de Transform que representan las posiciones intermedias
+    public Transform posicionInicial;
+    public List<Transform> posicionesIntermedias;
     private int posicionActualIndex = 0;
     private bool enMovimientoAscendente = true;
 
@@ -22,6 +21,9 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
     private bool detenerMovimiento = false;
 
+    private Coroutine secondCoroutine; // Nueva corutina
+    private bool seCompletoRecorridoInicial = false; // Nueva variable
+
     void Start()
     {
         if (posicionesIntermedias.Count == 0)
@@ -30,7 +32,6 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
             return;
         }
 
-        // Verificar si se ha asignado la posición inicial
         if (posicionInicial == null)
         {
             Debug.LogError("Asigna una posición inicial al objeto.");
@@ -54,7 +55,7 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         if (other.CompareTag("Player_Mirando"))
         {
             playerMirando = false;
-            tiempoDetectado = 0f; // Reiniciar el temporizador al dejar de mirar
+            tiempoDetectado = 0f;
         }
     }
 
@@ -80,14 +81,12 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
                 posicionActualIndex++;
                 if (posicionActualIndex == posicionesIntermedias.Count)
                 {
-                    // Alcanzó la última posición intermedia, detenerse
                     enMovimientoAscendente = false;
                     posicionActualIndex = posicionesIntermedias.Count - 1;
 
                     yield return new WaitForSeconds(tiempoDetenido);
                     tiempoDetenidoActual = Time.time;
 
-                    // Verificar si la tag "Player_Mirando" no ha sido detectada durante el tiempo mínimo requerido
                     while (Time.time - tiempoDetenidoActual < tiempoSinMirarMinimo)
                     {
                         if (!playerMirando)
@@ -98,12 +97,15 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
                         yield return null;
                     }
 
-                    // Desactivar el objeto si la tag "Player_Mirando" no se detecta durante el tiempo mínimo
-                    if (!playerMirando)
+                    if (Time.time - tiempoDetectado >= tiempoSinMirarMinimo && !playerMirando)
                     {
+                        // Si ha pasado el tiempo mínimo sin mirar y el jugador no está presente, desactivar el objeto
                         gameObject.SetActive(false);
                         yield break;
                     }
+
+                    // Se ha completado el recorrido inicial
+                    seCompletoRecorridoInicial = true;
                 }
             }
             else
@@ -111,11 +113,9 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
                 posicionActualIndex--;
                 if (posicionActualIndex < 0)
                 {
-                    // Volvió a la primera posición, reiniciar el movimiento ascendente
                     enMovimientoAscendente = true;
                     posicionActualIndex = 0;
 
-                    // Detener el movimiento al volver a la primera posición
                     detenerMovimiento = true;
                 }
             }
@@ -140,12 +140,77 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         }
 
         transform.position = posicionInicial.position;
-        tiempoDetectado = 0f; // Reiniciar el temporizador al volver a la posición inicial
+        tiempoDetectado = 0f;
 
-        // Reiniciar la dirección y recorrer las posiciones en sentido ascendente
         enMovimientoAscendente = true;
-        detenerMovimiento = false; // Permitir el movimiento nuevamente
+        detenerMovimiento = false;
 
         StartCoroutine(DesplazarHaciaPosicionesIntermedias());
     }
+
+    void Update()
+    {
+        // Activar la segunda corutina si se presiona la tecla F y se ha completado el recorrido inicial
+        if (Input.GetKeyDown(KeyCode.F) && seCompletoRecorridoInicial && secondCoroutine == null)
+        {
+            secondCoroutine = StartCoroutine(RecorridoDescendente());
+        }
+    }
+
+    IEnumerator RecorridoDescendente()
+    {
+        int lastIndex = posicionesIntermedias.Count;
+
+        // Recorrer desde la posición actual hasta la penúltima posición
+        for (int i = 0; i < lastIndex; i++)
+        {
+            Vector3 destino = posicionesIntermedias[i].position;
+            float distancia = Vector3.Distance(transform.position, destino);
+
+            while (distancia > 0.1f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, destino, velocidadDesplazamiento * Time.deltaTime);
+                distancia = Vector3.Distance(transform.position, destino);
+                yield return null;
+            }
+        }
+
+        // Detenerse en la última posición durante 5 segundos
+        yield return new WaitForSeconds(5f);
+
+        // Verificar si está en contacto con el tag durante al menos 3 segundos
+        float tiempoInicio = Time.time;
+        while (Time.time - tiempoInicio < 3f)
+        {
+            if (playerMirando)
+            {
+                yield return null;
+            }
+            else
+            {
+                // Si el jugador no está mirando, desactivar el objeto
+                gameObject.SetActive(false);
+                yield break;
+            }
+        }
+
+        // Recorrer desde la última posición hasta la posición inicial
+        for (int i = lastIndex - 1; i >= 0; i--)
+        {
+            Vector3 destino = posicionesIntermedias[i].position;
+            float distancia = Vector3.Distance(transform.position, destino);
+
+            while (distancia > 0.1f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, destino, velocidadDesplazamiento * Time.deltaTime);
+                distancia = Vector3.Distance(transform.position, destino);
+                yield return null;
+            }
+        }
+
+        // Reiniciar la segunda corutina para futuros usos
+        // (o realizar cualquier otra acción que necesites después del recorrido)
+        secondCoroutine = null;
+    }
+
 }
