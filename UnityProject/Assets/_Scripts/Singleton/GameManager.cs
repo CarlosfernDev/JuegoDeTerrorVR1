@@ -8,12 +8,11 @@ public class GameManager : MonoBehaviour
     public GameManager Instance { get; private set; }
 
     [SerializeField] private List<PuzzleScriptable> _PuzzleScripts;
-    private int _PuzzleCompleted;
-    //Clase para puzzles o scriptable object idk
+    [SerializeField] private List<GameObject> Interactuables;
 
-    [SerializeField] private float _CountDownGameTime;
-    private float _GameTimer;
-    private float _TimeReference;
+    private int _PuzzleCompleted;
+    [SerializeField] Animator BoardAnimator;
+    //Clase para puzzles o scriptable object idk
 
     #endregion
     #region UnityFunctions
@@ -29,11 +28,7 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
 
-        foreach(PuzzleScriptable Puzzle in _PuzzleScripts)
-        {
-            Puzzle.isDone = false;
-        }
-
+        //EnableAllPuzzle(false);
     }
 
 
@@ -56,21 +51,28 @@ public class GameManager : MonoBehaviour
 
     #region PuzzleFunctions
 
+    public void EnableAllPuzzle(bool value)
+    {
+        Interactuables[1].SetActive(false);
+        Interactuables[2].SetActive(true);
+        Interactuables[3].SetActive(true);
+
+        BoardAnimator.SetBool("Compuerta1", false);
+        BoardAnimator.SetBool("Compuerta2", true);
+        BoardAnimator.SetBool("Compuerta3", true);
+        BoardAnimator.SetBool("Compuerta4", true);
+        Cronometro.Instance.ReiniciarCronometro();
+
+        foreach (PuzzleScriptable Puzzle in _PuzzleScripts)
+        {
+            Puzzle.isEnabled = value;
+        }
+    }
+
     //Revisas la cantidad de Puzzles que faltan
     public int HowManyPuzzleIsDone()
     {
         return Mathf.Clamp(_PuzzleCompleted,0 ,4);
-    }
-
-    public void AddPuzzleQuantity(PuzzleScriptable value)
-    {
-        if (!_PuzzleScripts.Contains(value))
-        {
-            Debug.LogError("Este puzzle no esta en la lista: " + value.ID);
-            return;
-        }
-
-        _PuzzleCompleted = Mathf.Clamp(_PuzzleCompleted + 1,0, _PuzzleScripts.Count + 1);
     }
 
     public bool CheckPuzzleCompleted()
@@ -83,29 +85,5 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    #endregion
-
-    #region TemporizadorGlobal
-
-    public void SetCountDown()
-    {
-        _TimeReference = Time.time;
-    }
-
-    public float GetCountDown()
-    {
-        return  Mathf.Clamp(_CountDownGameTime - (Time.time - _TimeReference),0, _CountDownGameTime);
-    }
-
-    public bool CheckCountDown()
-    {
-        if(GetCountDown() == 0)
-        {
-            Lose();
-            return false;
-        }
-        return true;
-    }
-
-    #endregion
+    #endregion  
 }

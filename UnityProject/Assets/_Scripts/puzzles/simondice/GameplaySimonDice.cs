@@ -37,6 +37,12 @@ public class GameplaySimonDice : MonoBehaviour
 
     public void EnterSimonInput(int number)
     {
+
+        if (!PuzzleScipt.isEnabled)
+        {
+            return;
+        }
+
         if (!canISendInput)
         {
             return;

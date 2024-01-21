@@ -41,6 +41,11 @@ public class Logica_Calculadora_UI : MonoBehaviour
 
     public void OnButtonPress(int digito)
     {
+        if (!PuzzleScipt.isEnabled)
+        {
+            return;
+        }
+
         if (PuzzleScipt.isDone)
         {
             return;
