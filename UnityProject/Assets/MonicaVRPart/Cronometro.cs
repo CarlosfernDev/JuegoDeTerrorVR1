@@ -7,7 +7,7 @@ public class Cronometro : MonoBehaviour
 {
     public static Cronometro Instance;
 
-    [SerializeField] private TMP_Text Texto;
+    [SerializeField] private TMP_Text[] Textos;
 
     bool IsCounting;
 
@@ -48,7 +48,10 @@ public class Cronometro : MonoBehaviour
         int segundos = Mathf.FloorToInt(tiempo % 60);
         float milisegundos = (tiempo * 100) % 100;
 
-        Texto.text = string.Format("{0:00}:{1:00}:{2:00}", minutos, segundos, milisegundos);
+        foreach(TMP_Text texto in Textos)
+        {
+            texto.text = string.Format("{0:00}:{1:00}:{2:00}", minutos, segundos, milisegundos);
+        }
     }
 
     public void ReiniciarCronometro()
