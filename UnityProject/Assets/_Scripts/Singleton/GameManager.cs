@@ -28,6 +28,12 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this);
         }
+
+        foreach(PuzzleScriptable Puzzle in _PuzzleScripts)
+        {
+            Puzzle.isDone = false;
+        }
+
     }
 
 
