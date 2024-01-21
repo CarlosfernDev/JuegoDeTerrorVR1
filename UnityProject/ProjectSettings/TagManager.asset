@@ -8,11 +8,13 @@ TagManager:
   - Boton
   - BotonDelete
   - Player_Mirando
+  - Enemigo_Ver
+  - trigger_secuencia
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Interactable
   - Water
   - UI
   - PP
