@@ -7,4 +7,5 @@ public class PuzzleScriptable : ScriptableObject
 {
     public int ID;
     [HideInInspector] public bool isDone;
+    [HideInInspector] public bool isEnabled;
 }
