@@ -12,6 +12,7 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
     public Transform posicionInicial;
     public List<Transform> posicionesIntermedias;
+    public Animator[] modelosAnimados; // Animadores de los modelos en 3D
     private int posicionActualIndex = 0;
     private bool enMovimientoAscendente = true;
 
@@ -23,6 +24,7 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
     private Coroutine secondCoroutine; // Nueva corutina
     private bool seCompletoRecorridoInicial = false; // Nueva variable
+    private bool reproduciendoSecuencia = false; // Variable para controlar la reproducción de la secuencia
 
     void Start()
     {
@@ -43,21 +45,50 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player_Mirando") && posicionActualIndex == posicionesIntermedias.Count - 1)
+        if (enMovimientoAscendente && !detenerMovimiento)
         {
-            playerMirando = true;
-            tiempoDetectado = Time.time;
+            // Verificar si el objeto está en la última posición
+            if (posicionActualIndex == posicionesIntermedias.Count - 1)
+            {
+                // Referenciar la corutina de otro script (ReproducirSiguienteAnimacion) aquí
+                StartCoroutine(ControladorSecuencia.Instance.ReproducirSiguienteAnimacion());
+            }
         }
     }
 
-    void OnTriggerExit(Collider other)
+    IEnumerator ReproducirSecuencia()
     {
-        if (other.CompareTag("Player_Mirando"))
+        reproduciendoSecuencia = true;
+
+        // Lógica para reproducir la secuencia de animaciones
+        foreach (var modeloAnimado in modelosAnimados)
         {
-            playerMirando = false;
-            tiempoDetectado = 0f;
+            // Obtén el componente Animator del modelo actual
+            Animator animatorActual = modeloAnimado.GetComponent<Animator>();
+
+            // Activa el modelo actual
+            modeloAnimado.GetComponent<Renderer>().enabled = true;
+
+            // Comienza su animación
+            modeloAnimado.GetComponent<Animator>().SetTrigger("IniciarAnimacion");
+
+            // Espera hasta que la animación actual haya terminado
+            yield return new WaitForSeconds(animatorActual.GetCurrentAnimatorStateInfo(0).length);
+
+            // Desactiva el modelo actual
+            modeloAnimado.GetComponent<Renderer>().enabled = false;
         }
+
+        // Finalizar la reproducción de la secuencia
+        reproduciendoSecuencia = false;
+
+        // Esperar un tiempo antes de reactivar las colisiones con el tag "Player_Mirando"
+        yield return new WaitForSeconds(2f);
+
+        // Restablecer la detección de jugador mirando
+        playerMirando = false;
     }
+
 
     IEnumerator DesplazarHaciaPosicionesIntermedias()
     {
@@ -150,8 +181,8 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
     void Update()
     {
-        // Activar la segunda corutina si se presiona la tecla F y se ha completado el recorrido inicial
-        if (Input.GetKeyDown(KeyCode.F) && seCompletoRecorridoInicial && secondCoroutine == null)
+        // Activar la segunda corutina si se ha completado el recorrido inicial
+        if (seCompletoRecorridoInicial && secondCoroutine == null)
         {
             secondCoroutine = StartCoroutine(RecorridoDescendente());
         }
@@ -212,5 +243,4 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         // (o realizar cualquier otra acción que necesites después del recorrido)
         secondCoroutine = null;
     }
-
 }
