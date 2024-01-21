@@ -44,7 +44,7 @@ Material:
     - _QueueOffset: 0
     - _Transparency: 0.6
     m_Colors:
-    - _LightEmission: {r: 34.29675, g: 29.53331, b: 0, a: 1}
+    - _LightEmission: {r: 29.508848, g: 25.410395, b: 0, a: 1}
     - _offColor: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &494020045502576682

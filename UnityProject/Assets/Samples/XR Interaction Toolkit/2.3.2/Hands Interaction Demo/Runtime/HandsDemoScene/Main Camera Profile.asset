@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
   m_Name: Vignette
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   color:
     m_OverrideState: 0
     m_Value: {r: 0, g: 0, b: 0, a: 1}
@@ -43,10 +43,10 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: -0.63
+    m_Value: -2.45
   contrast:
     m_OverrideState: 1
-    m_Value: 23.5
+    m_Value: -1.7
   colorFilter:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -55,7 +55,7 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: -42
+    m_Value: -38.7
 --- !u!114 &-2646202009938523214
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -159,31 +159,31 @@ MonoBehaviour:
   active: 1
   redOutRedIn:
     m_OverrideState: 1
-    m_Value: 99
+    m_Value: 138
   redOutGreenIn:
-    m_OverrideState: 1
-    m_Value: 167
+    m_OverrideState: 0
+    m_Value: -200
   redOutBlueIn:
     m_OverrideState: 1
-    m_Value: 64
+    m_Value: 30
   greenOutRedIn:
-    m_OverrideState: 1
-    m_Value: -12
+    m_OverrideState: 0
+    m_Value: 44
   greenOutGreenIn:
     m_OverrideState: 1
-    m_Value: 172
+    m_Value: 84
   greenOutBlueIn:
     m_OverrideState: 1
-    m_Value: -17
+    m_Value: 114
   blueOutRedIn:
-    m_OverrideState: 1
-    m_Value: 5
+    m_OverrideState: 0
+    m_Value: 128
   blueOutGreenIn:
     m_OverrideState: 0
     m_Value: 0
   blueOutBlueIn:
-    m_OverrideState: 1
-    m_Value: 96
+    m_OverrideState: 0
+    m_Value: -19
 --- !u!114 &1876137989335084305
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -199,22 +199,22 @@ MonoBehaviour:
   active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: -1}
+    m_Value: {x: 0.7396134, y: 0.75638074, z: 1, w: -1}
   midtones:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: 0.44278067}
+    m_Value: {x: 1, y: 0.9062289, z: 0.5326659, w: 1}
   highlights:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: 1}
+    m_Value: {x: 1, y: 0.9913936, z: 0.72527456, w: 0.1373802}
   shadowsStart:
     m_OverrideState: 1
     m_Value: 0
   shadowsEnd:
     m_OverrideState: 1
-    m_Value: 0.19
+    m_Value: 0.12
   highlightsStart:
     m_OverrideState: 1
-    m_Value: 0.77
+    m_Value: 0.28
   highlightsEnd:
     m_OverrideState: 1
-    m_Value: 0.88
+    m_Value: 0.28
