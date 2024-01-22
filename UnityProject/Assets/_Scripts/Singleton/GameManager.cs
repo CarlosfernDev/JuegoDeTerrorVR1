@@ -53,9 +53,9 @@ public class GameManager : MonoBehaviour
 
     public void EnableAllPuzzle(bool value)
     {
-        Interactuables[1].SetActive(false);
+        Interactuables[0].SetActive(false);
+        Interactuables[1].SetActive(true);
         Interactuables[2].SetActive(true);
-        Interactuables[3].SetActive(true);
 
         BoardAnimator.SetBool("Compuerta1", false);
         BoardAnimator.SetBool("Compuerta2", true);
