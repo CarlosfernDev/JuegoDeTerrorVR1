@@ -12,6 +12,8 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
     public Transform posicionInicial;
     public List<Transform> posicionesIntermedias;
+    public GameObject objetoADesactivar; // Nuevo objeto a desactivar
+
     private int posicionActualIndex = 0;
     private bool enMovimientoAscendente = true;
 
@@ -26,16 +28,8 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
 
     private Animator myAnim;
 
-    
-
-
-
-
-
     void Start()
     {
-
-        
         if (posicionesIntermedias.Count == 0)
         {
             Debug.LogError("Agrega al menos un Transform de posición intermedia en la lista.");
@@ -52,9 +46,6 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
             myAnim = GetComponent<Animator>();
         }
         StartCoroutine(DesplazarHaciaPosicionesIntermedias());
-
-        
-        
     }
 
     void Update()
@@ -69,10 +60,12 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         if (seCompletoRecorridoInicial && Time.time - tiempoDetectado >= tiempoSinMirarMinimo && !playerMirando)
         {
             // Desactivar el objeto
-            //gameObject.SetActive(false);
+            if (objetoADesactivar != null)
+            {
+                objetoADesactivar.SetActive(false);
+            }
         }
     }
-
 
     void OnTriggerEnter(Collider other)
     {
@@ -80,7 +73,6 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         {
             playerMirando = true;
             tiempoDetectado = Time.time;
-            
         }
     }
 
@@ -90,7 +82,6 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         {
             playerMirando = false;
             tiempoDetectado = 0f;
-            
         }
     }
 
@@ -122,6 +113,7 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
                     // Activar el primer trigger solo si no se ha completado el recorrido inicial antes
                     if (!seCompletoRecorridoInicial)
                     {
+                        Debug.Log("InvokeAnimation");
                         myAnim.SetTrigger("Invoke_Animation");
                         yield return new WaitForSeconds(tiempoDetenido);
                         tiempoDetenidoActual = Time.time;
@@ -139,7 +131,10 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
                         if (Time.time - tiempoDetectado >= tiempoSinMirarMinimo && !playerMirando)
                         {
                             // Desactivar el objeto
-                            gameObject.SetActive(false);
+                            if (objetoADesactivar != null)
+                            {
+                                objetoADesactivar.SetActive(false);
+                            }
                             yield break;
                         }
 
@@ -148,6 +143,10 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
                     }
 
                     myAnim.SetTrigger("Leaving");
+                    seCompletoRecorridoInicial = false;
+                    break;
+
+
                 }
             }
             else
@@ -164,21 +163,16 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
             yield return null;
         }
 
+
+
         StartCoroutine(DesplazarAPosicionInicial());
     }
 
     IEnumerator DesplazarAPosicionInicial()
     {
-        float tiempoInicio = Time.time;
-        Vector3 posicionActual = transform.position;
 
-        while (Time.time - tiempoInicio < tiempoLimite)
-        {
-            float t = (Time.time - tiempoInicio) / tiempoLimite;
-            transform.position = Vector3.Lerp(posicionActual, posicionInicial.position, t);
-            yield return null;
-        }
-
+        posicionActualIndex = 0;
+        Debug.Log("DesplazarPosicionInicial");
         transform.position = posicionInicial.position;
         tiempoDetectado = 0f;
 
@@ -186,9 +180,9 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         detenerMovimiento = false;
 
         StartCoroutine(DesplazarHaciaPosicionesIntermedias());
+
+        yield return null;  
     }
-
-
 
     IEnumerator RecorridoDescendente()
     {
@@ -221,16 +215,16 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
             }
             else
             {
-                // Si el jugador no está mirando, desactivar el objeto
-                gameObject.SetActive(false);
+                // Desactivar el otro objeto si no cumple la condición
+                if (objetoADesactivar != null)
+                {
+                    objetoADesactivar.SetActive(false);
+                }
                 yield break;
             }
         }
-        if (posicionActualIndex == lastIndex - 1)
-        {
-            myAnim.SetTrigger("Invoke_Animation");
-        }
 
+        // Activar el trigger "Invoke_Animation" cuando el objeto esté en la última posición
 
         // Recorrer desde la última posición hasta la posición inicial
         for (int i = lastIndex - 1; i >= 0; i--)
@@ -250,8 +244,4 @@ public class Movimiento_Mounstro_Ver : MonoBehaviour
         // (o realizar cualquier otra acción que necesites después del recorrido)
         secondCoroutine = null;
     }
-
 }
-
-
-
