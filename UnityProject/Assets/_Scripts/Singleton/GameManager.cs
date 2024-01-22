@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     #region Instance Things
-    public GameManager Instance { get; private set; }
+    public static GameManager Instance { get; private set; }
 
     [SerializeField] private List<PuzzleScriptable> _PuzzleScripts;
     [SerializeField] private List<GameObject> Interactuables;
@@ -67,6 +67,8 @@ public class GameManager : MonoBehaviour
         {
             Puzzle.isEnabled = value;
         }
+
+        EnemigoDeLuzRemake.instance.StarTimer();
     }
 
     //Revisas la cantidad de Puzzles que faltan

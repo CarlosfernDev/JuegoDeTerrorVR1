@@ -10,6 +10,7 @@ TagManager:
   - Player_Mirando
   - Enemigo_Ver
   - trigger_secuencia
+  - Luz
   layers:
   - Default
   - TransparentFX
@@ -21,9 +22,9 @@ TagManager:
   - Grabeable
   - PlayerControllerLayer
   - LineObject
-  - 
-  - 
-  - 
+  - Enemy
+  - Props
+  - NoLightRender
   - 
   - 
   - 
