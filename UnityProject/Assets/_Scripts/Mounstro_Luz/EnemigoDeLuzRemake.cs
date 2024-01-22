@@ -63,8 +63,11 @@ public class EnemigoDeLuzRemake : MonoBehaviour
 
             TimeSlider -= _lessSlider;
 
-            MoveEnemy();
             SetSliderValue();
+            TestTime();
+            
+
+            MoveEnemy();
 
             yield return new WaitForSeconds(Time.deltaTime);
         }
@@ -76,9 +79,9 @@ public class EnemigoDeLuzRemake : MonoBehaviour
         while (true)
         {
             AddValor();
+            SetSliderValue();
 
             MoveEnemy();
-            SetSliderValue();
 
             yield return new WaitForSeconds(coldownAdd);
         }
@@ -109,6 +112,7 @@ public class EnemigoDeLuzRemake : MonoBehaviour
 
         Debug.Log(newEnemyPosition);
         prefabObjetoAMover.transform.position = posiciones[newEnemyPosition].transform.position;
+        prefabObjetoAMover.transform.rotation = posiciones[newEnemyPosition].transform.rotation;
         enemyPosition = newEnemyPosition;
     }
 
