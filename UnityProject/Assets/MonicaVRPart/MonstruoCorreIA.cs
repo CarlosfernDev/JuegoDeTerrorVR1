@@ -9,12 +9,19 @@ public class MonstruoIA : MonoBehaviour
     public float tiempoEsperaPararse = 1f;
     public float margenAtaque = 2f;
 
+    public Animator AnimacionCorrer;
+
+    public AudioSource RugidoInicial;
+    public AudioSource Pasos;
+
     private bool atacando = false;
 
     private Vector3 posicionInicial;
 
     void Start()
     {
+        RugidoInicial = GetComponent<AudioSource>();
+        Pasos = GetComponent<AudioSource>();
         StartCoroutine(MonstruoComportamiento());
     }
 
@@ -46,11 +53,15 @@ public class MonstruoIA : MonoBehaviour
     {
         // Agrega aquí la lógica para reproducir el sonido del monstruo
         Debug.Log("Monstruo: ¡Grrr! Sonido aterrador");
+        RugidoInicial.Play();
     }
 
     IEnumerator Atacar()
     {
         Debug.Log("Monstruo: ¡Atacando!");
+        Pasos.Play();
+
+        AnimacionCorrer.Play("Corriendo");
 
         // Calcular el tiempo de ataque
         float tiempoDeAtaque = Time.time + margenAtaque;
