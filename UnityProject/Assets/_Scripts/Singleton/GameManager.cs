@@ -10,8 +10,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<PuzzleScriptable> _PuzzleScripts;
     [SerializeField] private List<GameObject> Interactuables;
 
+    bool isFinish = false;
+
     private int _PuzzleCompleted;
     [SerializeField] Animator BoardAnimator;
+    [SerializeField] private AudioSource Screamer;
+    [SerializeField] private GameObject GameOverObject;
     //Clase para puzzles o scriptable object idk
 
     #endregion
@@ -28,6 +32,7 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
 
+        GameOverObject.SetActive(false);
         //EnableAllPuzzle(false);
     }
 
@@ -38,13 +43,36 @@ public class GameManager : MonoBehaviour
 
     public void Win()
     {
+        if (isFinish)
+            return;
+
+        isFinish = true;
+
+        Cronometro.Instance.PararCronometro();
+
         Debug.Log("Ganaste");
         // Logica de ganar
     }
 
     public void Lose()
     {
+        if (isFinish)
+            return;
+
+        isFinish = true;
+
+        Screamer.Play();
+        GameOverObject.SetActive(true);
+        StartCoroutine(LoseCorutine());
         // Logica de perder
+    }
+
+    IEnumerator LoseCorutine()
+    {
+        yield return new WaitForSeconds(3f);
+        Application.Quit();
+
+        yield return null;
     }
 
     #endregion
@@ -85,6 +113,15 @@ public class GameManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void AddPuzzleCompleted()
+    {
+        if(_PuzzleCompleted == 0)
+        {
+            Monsruo_Ver_Script.Instance.TriggearMosntruo();
+        }
+        _PuzzleCompleted += 1;
     }
 
     #endregion  

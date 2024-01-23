@@ -104,6 +104,7 @@ public class GameplaySimonDice : MonoBehaviour
 
             LightBulbPass[numberSerie.Count - 1].SetFloat("_Intensity", 1);
             PuzzleScipt.isDone = true;
+            GameManager.Instance.AddPuzzleCompleted();
             return;
         }
         usernumberSerie = new List<int>();

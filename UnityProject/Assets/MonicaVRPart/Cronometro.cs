@@ -31,6 +31,7 @@ public class Cronometro : MonoBehaviour
 
         float tiempoTranscurrido = Time.time - tiempoInicio;
         float tiempoRestante = Mathf.Max(0, duracionEnMinutos * 60 - tiempoTranscurrido);
+
         ActualizarCronometro(tiempoRestante);
 
         if (tiempoRestante <= 0)
@@ -52,6 +53,11 @@ public class Cronometro : MonoBehaviour
         {
             texto.text = string.Format("{0:00}:{1:00}:{2:00}", minutos, segundos, milisegundos);
         }
+    }
+
+    public void PararCronometro()
+    {
+        IsCounting = false;
     }
 
     public void ReiniciarCronometro()

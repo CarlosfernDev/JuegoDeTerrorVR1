@@ -24,6 +24,7 @@ public class Logica_Calculadora_UI : MonoBehaviour
 
     private void Awake()
     {
+        PuzzleScipt.isDone = false;
         ActualizarPantalla();
     }
 
@@ -105,6 +106,7 @@ public class Logica_Calculadora_UI : MonoBehaviour
             PuzzleScipt.isDone = true;
             pantalla.color = Color.green;
             CorrectMaterial.SetFloat("_Intensity", 1);
+            GameManager.Instance.AddPuzzleCompleted();
             return;
             // ActivarObjeto(objetoCorrecto);
         }

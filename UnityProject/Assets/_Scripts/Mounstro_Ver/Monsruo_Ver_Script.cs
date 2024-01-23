@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Monsruo_Ver_Script : MonoBehaviour
 {
+    public static Monsruo_Ver_Script Instance;
+
     private int posicionActualIndex;
     private float tiempoDetectado;
 
@@ -23,19 +25,12 @@ public class Monsruo_Ver_Script : MonoBehaviour
 
     public BoxCollider boxCollider;
 
+    public AudioSource SpawnEnemySound;
 
 
-
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        TriggearMosntruo();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        Instance = this;
     }
 
     private void RestartValues()
@@ -47,9 +42,10 @@ public class Monsruo_Ver_Script : MonoBehaviour
         tiempoDetectadoReferencia = 0f;
     }
 
-    private void TriggearMosntruo()
+    public void TriggearMosntruo()
     {
         RestartValues();
+        SpawnEnemySound.Play();
         objectoAMover.SetActive(true);
 
         if(coreCorutine != null)
@@ -67,7 +63,7 @@ public class Monsruo_Ver_Script : MonoBehaviour
             return;
         }
 
-        if (other.CompareTag("Player_Mirando"))
+        if (other.CompareTag("MainCamera"))
         {
             tiempoDetectadoReferencia = Time.time;
             tiempoDetectado = 0;
@@ -78,16 +74,19 @@ public class Monsruo_Ver_Script : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("TriggeStay");
-        if (other.CompareTag("Player_Mirando"))
+        if (!enemiesWaiting)
         {
-            Debug.Log("TriggeStay");
+            return;
+        }
+
+        if (other.CompareTag("MainCamera"))
+        {
             tiempoDetectado = Time.time - tiempoDetectadoReferencia;
         }
     }
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player_Mirando"))
+        if (other.CompareTag("MainCamera"))
         {   
             tiempoDetectado = 0f;
         }
@@ -119,7 +118,6 @@ public class Monsruo_Ver_Script : MonoBehaviour
             {
                 HasPerdido();
                 Debug.Log("Te han matado");
-                StopCoroutine(coreCorutine);  
             }
 
             if (tiempoMinimo < tiempoDetectado)
@@ -137,7 +135,7 @@ public class Monsruo_Ver_Script : MonoBehaviour
 
         while (true)
         {
-            if (myAnim.GetCurrentAnimatorStateInfo(0).IsName("Joining"))
+            if (myAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
             {
                 break;
             }
@@ -152,12 +150,12 @@ public class Monsruo_Ver_Script : MonoBehaviour
     public void HasPerdido()
     {
         boxCollider.enabled = false;
-        DesactivarMonstruo();
+        StopCoroutine(coreCorutine);
     }
 
     public void DesactivarMonstruo()
     {
+        StopCoroutine(coreCorutine);
         objectoAMover.SetActive(false);
-        TriggearMosntruo();
     }
 }
