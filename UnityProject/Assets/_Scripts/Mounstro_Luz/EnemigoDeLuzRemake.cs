@@ -13,6 +13,9 @@ public class EnemigoDeLuzRemake : MonoBehaviour
     public float coldownReduce;
     public float coldownAdd;
 
+    private bool AddTime;
+    private bool LightChaos;
+
     public Slider _slider;
 
     public GameObject prefabObjetoAMover;
@@ -25,6 +28,8 @@ public class EnemigoDeLuzRemake : MonoBehaviour
     private float IntesityStart;
 
     public Coroutine CoreCorutine;
+
+    public AudioSource Audio;
 
     // Start is called before the first frame update
     void Awake()
@@ -63,9 +68,10 @@ public class EnemigoDeLuzRemake : MonoBehaviour
 
     IEnumerator TimeReduce()
     {
+        prefabObjetoAMover.SetActive(true);
+        AddTime = false;
         while (true)
         {
-
             TimeSlider -= _lessSlider;
 
             SetSliderValue();
@@ -80,13 +86,15 @@ public class EnemigoDeLuzRemake : MonoBehaviour
 
     IEnumerator TimeAdd()
     {
+        prefabObjetoAMover.SetActive(false);
+        mylight.intensity = 0;
+        AddTime = true;
         yield return new WaitForSeconds(coldownAdd);
+
         while (true)
         {
             AddValor();
             SetSliderValue();
-
-            MoveEnemy();
 
             yield return new WaitForSeconds(coldownAdd);
         }
@@ -106,6 +114,9 @@ public class EnemigoDeLuzRemake : MonoBehaviour
     
     private void MoveEnemy()
     {
+        if (AddTime)
+            return;
+
         Debug.Log(TimeSlider / (1f / (float)posiciones.Length));
 
         int newEnemyPosition = (int)Mathf.Floor(TimeSlider / (1f / (float)posiciones.Length));
@@ -115,15 +126,32 @@ public class EnemigoDeLuzRemake : MonoBehaviour
         if (newEnemyPosition == enemyPosition)
             return;
 
-        Debug.Log(newEnemyPosition);
+        StartCoroutine(LightsChaos());
+
+        Audio.Play();
+
         prefabObjetoAMover.transform.position = posiciones[newEnemyPosition].transform.position;
         prefabObjetoAMover.transform.rotation = posiciones[newEnemyPosition].transform.rotation;
         enemyPosition = newEnemyPosition;
     }
 
+    IEnumerator LightsChaos()
+    {
+        LightChaos = true;
+        mylight.intensity = 0;
+        yield return new WaitForSeconds(0.2f);
+        mylight.intensity = Mathf.Lerp(0, IntesityStart, TimeSlider);
+        LightChaos = false;
+        yield return null;
+    }
+
     private void SetSliderValue()
     {
         _slider.value = TimeSlider;
+
+        if (AddTime || LightChaos)
+            return;
+
         mylight.intensity = Mathf.Lerp(0, IntesityStart, TimeSlider);
     }
 
