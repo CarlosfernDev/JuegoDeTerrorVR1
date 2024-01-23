@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
         BoardAnimator.SetBool("Compuerta1", false);
         BoardAnimator.SetBool("Compuerta2", true);
         BoardAnimator.SetBool("Compuerta3", true);
-        BoardAnimator.SetBool("Compuerta4", true);
+        BoardAnimator.SetBool("Compuerta4", false);
         Cronometro.Instance.ReiniciarCronometro();
 
         foreach (PuzzleScriptable Puzzle in _PuzzleScripts)
