@@ -15,7 +15,7 @@ public class Cronometro : MonoBehaviour
 
     private float tiempoInicio;
 
-    UnityEvent ActivarTrasAcabarTiempo;
+    public UnityEvent ActivarTrasAcabarTiempo;
 
     void Start()
     {

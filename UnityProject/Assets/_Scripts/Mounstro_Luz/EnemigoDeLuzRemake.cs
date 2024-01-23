@@ -56,6 +56,11 @@ public class EnemigoDeLuzRemake : MonoBehaviour
         CoreCorutine = StartCoroutine(TimeAdd());
     }
 
+    public void StopTimer()
+    {
+        StopCoroutine(CoreCorutine);
+    }
+
     IEnumerator TimeReduce()
     {
         while (true)

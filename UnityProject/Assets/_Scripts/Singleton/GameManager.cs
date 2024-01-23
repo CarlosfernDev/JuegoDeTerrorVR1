@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Animator BoardAnimator;
     [SerializeField] private AudioSource Screamer;
     [SerializeField] private GameObject GameOverObject;
+    [SerializeField] private GameObject WinObject;
     //Clase para puzzles o scriptable object idk
 
     #endregion
@@ -32,6 +33,7 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
 
+        WinObject.SetActive(false);
         GameOverObject.SetActive(false);
         //EnableAllPuzzle(false);
     }
@@ -48,7 +50,9 @@ public class GameManager : MonoBehaviour
 
         isFinish = true;
 
+        EnemigoDeLuzRemake.instance.StopTimer();
         Cronometro.Instance.PararCronometro();
+        WinObject.SetActive(true);
 
         Debug.Log("Ganaste");
         // Logica de ganar
@@ -107,7 +111,7 @@ public class GameManager : MonoBehaviour
 
     public bool CheckPuzzleCompleted()
     {
-        if (_PuzzleCompleted == _PuzzleScripts.Count + 1)
+        if (_PuzzleCompleted == _PuzzleScripts.Count)
         {
             Win();
             return true;
@@ -122,6 +126,8 @@ public class GameManager : MonoBehaviour
             Monsruo_Ver_Script.Instance.TriggearMosntruo();
         }
         _PuzzleCompleted += 1;
+
+        CheckPuzzleCompleted();
     }
 
     #endregion  
