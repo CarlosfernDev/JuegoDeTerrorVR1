@@ -26,6 +26,7 @@ public class GameplaySimonDice : MonoBehaviour
     {
         ResetSimonDice();
         IdleCoroutine = StartCoroutine(ButtonParpadeoInicial());
+        PuzzleScipt.isDone = false;
         Debug.Log(numberSerie[0]);
     }
 

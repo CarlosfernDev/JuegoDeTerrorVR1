@@ -151,6 +151,8 @@ public class Monsruo_Ver_Script : MonoBehaviour
     {
         boxCollider.enabled = false;
         StopCoroutine(coreCorutine);
+
+        GameManager.Instance.Lose();
     }
 
     public void DesactivarMonstruo()
